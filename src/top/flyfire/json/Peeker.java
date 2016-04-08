@@ -50,4 +50,16 @@ public interface Peeker {
         return COMMA == sign;
     }
 
+    String TRUE = "true";
+    String FALSE = "false";
+
+    static boolean isBoolString(String flag){
+        return TRUE.equals(flag)||FALSE.equals(flag);
+    }
+
+    static boolean isNumString(String flag){
+        return true;
+    }
+
+
 }

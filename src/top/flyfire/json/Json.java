@@ -1,5 +1,9 @@
 package top.flyfire.json;
 
+import top.flyfire.json.loader.DefaultArrayLoader;
+import top.flyfire.json.loader.DefaultObjectLoader;
+import top.flyfire.json.loader.DefaultPrimitiveLoader;
+import top.flyfire.json.loader.Loader;
 import top.flyfire.json.named.ArrayNamed;
 import top.flyfire.json.named.Named;
 import top.flyfire.json.named.ObjectNamed;
@@ -12,6 +16,8 @@ public class Json {
     private ParserSet parserSet;
 
     private Named named;
+
+    private Loader loader;
 
     private String source;
 
@@ -44,11 +50,14 @@ public class Json {
         char dest = this.source.charAt(cursor);
         if(Peeker.isArrayStart(dest)){
             if(!this.roll()) throw new RuntimeException(this.source);
+            this.loader = new DefaultArrayLoader();
             return parserSet.ArrayParser;
         }else if(Peeker.isObjectStart(dest)){
             if(!this.roll()) throw new RuntimeException(this.source);
+            this.loader = new DefaultObjectLoader();
             return parserSet.ObjectParser;
         }else{
+            this.loader = new DefaultPrimitiveLoader();
             return parserSet.PrimitiveParser;
         }
     }
@@ -95,13 +104,16 @@ public class Json {
                     end = Json.this.cursor;
                 }
             }
-            Json.this.named = new ObjectNamed(Json.this.source.substring(start,end),Json.this.named);
+            String property = Json.this.source.substring(start,end);
+            Json.this.named = new ObjectNamed(property,Json.this.named);
+            Json.this.loader.prepare(property);
             //System.out.println(Json.this.named);
         }
 
         private void readValue(){
             this.peek().parse();
             Json.this.named = Json.this.named.call();
+            Json.this.loader = Json.this.loader.call();
         }
 
         private boolean hasNextObjectElement(){
@@ -120,11 +132,14 @@ public class Json {
             char dest;
             if(Peeker.isArrayStart(dest = Json.this.source.charAt(Json.this.cursor))){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
+                Json.this.loader = new DefaultArrayLoader(Json.this.loader);
                 return parserSet.ArrayParser;
             }else if(Peeker.isObjectStart(dest)){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
+                Json.this.loader = new DefaultObjectLoader(Json.this.loader);
                 return parserSet.ObjectParser;
             }else{
+                Json.this.loader = new DefaultPrimitiveLoader(Json.this.loader);
                 return parserSet.ObjectPrimitiveParser;
             }
         }
@@ -144,7 +159,7 @@ public class Json {
                     break;
                 }
             }
-            Json.this.source.substring(start, end);
+            Json.this.loader.load(Json.this.source.substring(start, end));
             //System.out.println(Json.this.source.substring(start,end));
         }
     }
@@ -174,12 +189,14 @@ public class Json {
 
         private void prevRead(int i){
             Json.this.named = new ArrayNamed(i,Json.this.named);
+            Json.this.loader.prepare(i);
             //System.out.println(Json.this.named);
         }
 
         public void readCell(){
             this.peek().parse();
             Json.this.named = Json.this.named.call();
+            Json.this.loader = Json.this.loader.call();
         }
 
         private boolean hasNextArrayCell(){
@@ -202,11 +219,14 @@ public class Json {
             char dest ;
             if(Peeker.isArrayStart(dest = Json.this.source.charAt(cursor))){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
+                Json.this.loader = new DefaultArrayLoader(Json.this.loader);
                 return parserSet.ArrayParser;
             }else if(Peeker.isObjectStart(dest)){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
+                Json.this.loader = new DefaultObjectLoader(Json.this.loader);
                 return parserSet.ObjectParser;
             }else{
+                Json.this.loader = new DefaultPrimitiveLoader(Json.this.loader);
                 return parserSet.ArrayPrimitiveParser;
             }
         }
@@ -225,7 +245,7 @@ public class Json {
                     break;
                 }
             }
-            Json.this.source.substring(start, end);
+            Json.this.loader.load(Json.this.source.substring(start, end));
             //System.out.println(Json.this.source.substring(start,end));
         }
     }
@@ -234,6 +254,7 @@ public class Json {
         @Override
         public void parse() {
             //System.out.println(Json.this.source);
+            Json.this.loader.load(Json.this.source);
         }
     }
 }
