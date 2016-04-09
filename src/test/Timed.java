@@ -12,6 +12,7 @@ public class Timed {
     static int COUNT = 100000;
 
     public static void main(String[] args){
+        //System.out.println(jsongt10000);
         testMyJsonResolver(jsongt10000);
     }
 

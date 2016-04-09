@@ -8,6 +8,7 @@ import top.flyfire.json.named.ArrayNamed;
 import top.flyfire.json.named.Named;
 import top.flyfire.json.named.ObjectNamed;
 import top.flyfire.json.named.RootNamed;
+import top.flyfire.json.value.PrimitiveModel;
 
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/4/7.
@@ -159,7 +160,7 @@ public class Json {
                     break;
                 }
             }
-            Json.this.loader.load(Json.this.source.substring(start, end));
+            Json.this.loader.load(new PrimitiveModel(Json.this.source.substring(start, end)).val());
             //System.out.println(Json.this.source.substring(start,end));
         }
     }
@@ -245,7 +246,7 @@ public class Json {
                     break;
                 }
             }
-            Json.this.loader.load(Json.this.source.substring(start, end));
+            Json.this.loader.load(new PrimitiveModel(Json.this.source.substring(start, end)));
             //System.out.println(Json.this.source.substring(start,end));
         }
     }
@@ -254,7 +255,7 @@ public class Json {
         @Override
         public void parse() {
             //System.out.println(Json.this.source);
-            Json.this.loader.load(Json.this.source);
+            Json.this.loader.load(new PrimitiveModel(Json.this.source).val());
         }
     }
 }

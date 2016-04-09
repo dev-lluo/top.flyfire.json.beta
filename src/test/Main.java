@@ -13,19 +13,19 @@ import java.util.regex.Pattern;
 public class Main {
 
     public static void main(String[] args){
-//        Json json = new Json("{\"a\":123,\"b\":\"123\",\"df\":true,test:{a:123,b:false},test2:true,test3:[1,223,456],test4:\"end\"}");
-//        json.parse();
-         String s = "+12.3";
-        if(isNumeric(s)) {
-            System.out.println(new BigDecimal(s));
-        }
-        long start = System.currentTimeMillis();
-            for(int i = 0;i<100000;i++){
-                String temp = s+i;
-                if(isNumeric(temp))
-                new BigDecimal(temp);
-            }
-        System.out.println(System.currentTimeMillis()-start);
+        Json json = new Json("{\"a\":123,\"b\":\"123\",\"df\":true,test:{a:123,b:false},test2:true,test3:[1,223,456],test4:\"end\"}");
+        json.parse();
+//         String s = "+12.3";
+//        if(isNumeric(s)) {
+//            System.out.println(new BigDecimal(s));
+//        }
+//        long start = System.currentTimeMillis();
+//            for(int i = 0;i<100000;i++){
+//                String temp = s+i;
+//                if(isNumeric(temp))
+//                new BigDecimal(temp);
+//            }
+//        System.out.println(System.currentTimeMillis()-start);
     }
 
     public static boolean isNumeric(String s){
