@@ -108,7 +108,6 @@ public class Json {
             String property = Json.this.source.substring(start,end);
             Json.this.named = new ObjectNamed(property,Json.this.named);
             Json.this.loader.prepare(property);
-            //System.out.println(Json.this.named);
         }
 
         private void readValue(){
@@ -150,18 +149,15 @@ public class Json {
     private class ObjectPrimitiveParser implements Parser {
         @Override
         public void parse() {
-            int start = Json.this.cursor;
-            int end = -1;
-            char dest;
+            int start = Json.this.cursor, end = -1;char dest,skip = ((skip = Json.this.source.charAt(Json.this.cursor))=='\"'||skip=='\'')?skip:'\0';
             while(Json.this.roll()&&end==-1){
-                if(Peeker.isComma(dest = Json.this.source.charAt(Json.this.cursor))
+                if(((skip=((dest = Json.this.source.charAt(Json.this.cursor))==skip?'\0':skip))=='\0')&&Peeker.isComma(dest = Json.this.source.charAt(Json.this.cursor))
                         ||Peeker.isObjectEnd(dest)){
                     end = Json.this.cursor;
                     break;
                 }
             }
             Json.this.loader.load(new PrimitiveModel(Json.this.source.substring(start, end)).val());
-            //System.out.println(Json.this.source.substring(start,end));
         }
     }
 
@@ -191,7 +187,6 @@ public class Json {
         private void prevRead(int i){
             Json.this.named = new ArrayNamed(i,Json.this.named);
             Json.this.loader.prepare(i);
-            //System.out.println(Json.this.named);
         }
 
         public void readCell(){
@@ -236,25 +231,20 @@ public class Json {
     private class ArrayPrimitiveParser implements Parser {
         @Override
         public void parse() {
-            int start = Json.this.cursor;
-            int end = -1;
-            char dest = '\0';
+            int start = Json.this.cursor,end = -1;char dest ,skip = ((skip = Json.this.source.charAt(Json.this.cursor))=='\"'||skip=='\'')?skip:'\0';
             while(Json.this.roll()&&end==-1){
-                if(Peeker.isComma(dest = Json.this.source.charAt(Json.this.cursor))
-                        ||Peeker.isArrayEnd(dest)){
+                if(((skip=((dest = Json.this.source.charAt(Json.this.cursor))==skip?'\0':skip))=='\0')&&(Peeker.isComma(dest)||Peeker.isArrayEnd(dest))){
                     end = Json.this.cursor;
                     break;
                 }
             }
             Json.this.loader.load(new PrimitiveModel(Json.this.source.substring(start, end)));
-            //System.out.println(Json.this.source.substring(start,end));
         }
     }
 
     private class PrimitiveParser implements Parser {
         @Override
         public void parse() {
-            //System.out.println(Json.this.source);
             Json.this.loader.load(new PrimitiveModel(Json.this.source).val());
         }
     }

@@ -4,6 +4,7 @@ package test;
 import top.flyfire.json.Json;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -26,34 +27,6 @@ public class Main {
 //                new BigDecimal(temp);
 //            }
 //        System.out.println(System.currentTimeMillis()-start);
-    }
-
-    public static boolean isNumeric(String s){
-        int len = s.length();
-        if(len==1){
-            char c = s.charAt(0);
-            return c>='0'&&c<='9';
-        }else{
-            int cursor =0;char c;boolean signed = false;
-            if((c=s.charAt(cursor))=='+'||c=='-'){
-                cursor++;
-                signed = true;
-            }
-            if((!signed&&c=='.')||(signed&&(c=s.charAt(cursor))=='.')){
-                return false;
-            }else if(c>='0'&&c<='9'){
-                len = len -1;
-                while(++cursor<len){
-                    if(((c=s.charAt(cursor))<'0'||c>'9')&&c!='.'){
-                        return false;
-                    }
-                }
-                return ((c=s.charAt(len))>='0'&&c<='9') ;
-            }else{
-                return false;
-            }
-
-        }
     }
 
     static int add(int a ,int b){
