@@ -11,12 +11,13 @@ public class ReflectContext {
 
     static final Map<Class<?>,ClassMetaInfo> CLASS_META_INFO_MAP = new HashMap<Class<?>,ClassMetaInfo>();
 
-    public static void resolve(Class<?> clzz){
-        Method[] clzzMethods = clzz.getMethods();
-        ClassMetaInfo classMetaInfo = new ClassMetaInfo();
-        for(int i = 0,len = clzzMethods.length;i<len;i++){
-
+    public static ClassMetaInfo resolve(Class<?> clzz){
+        ClassMetaInfo classMetaInfo;
+        if((classMetaInfo = CLASS_META_INFO_MAP.get(clzz))==null){
+            classMetaInfo = new ClassMetaInfo(clzz);
+            CLASS_META_INFO_MAP.put(clzz,classMetaInfo);
         }
+        return classMetaInfo;
     }
 
 }
