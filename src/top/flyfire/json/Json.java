@@ -1,9 +1,7 @@
 package top.flyfire.json;
 
-import top.flyfire.json.loader.DefaultArrayLoader;
-import top.flyfire.json.loader.DefaultObjectLoader;
-import top.flyfire.json.loader.DefaultPrimitiveLoader;
-import top.flyfire.json.loader.Loader;
+import test.ClassA;
+import top.flyfire.json.loader.*;
 import top.flyfire.json.named.ArrayNamed;
 import top.flyfire.json.named.Named;
 import top.flyfire.json.named.ObjectNamed;
@@ -15,6 +13,8 @@ import top.flyfire.json.value.PrimitiveModel;
  */
 public class Json {
     private ParserSet parserSet;
+
+    private LoaderManager loaderManager;
 
     private Named named;
 
@@ -33,6 +33,11 @@ public class Json {
         this.source = source;
         this.cursor = 0;
         this.cursorBound = source.length();
+        this.loaderManager = LoaderManager.DEFAULT;
+    }
+
+    public Json(String source, Class<?> clzz){
+
     }
 
     public void parse(){
@@ -51,14 +56,14 @@ public class Json {
         char dest = this.source.charAt(cursor);
         if(Peeker.isArrayStart(dest)){
             if(!this.roll()) throw new RuntimeException(this.source);
-            this.loader = new DefaultArrayLoader();
+            this.loader = this.loaderManager.array();
             return parserSet.ArrayParser;
         }else if(Peeker.isObjectStart(dest)){
             if(!this.roll()) throw new RuntimeException(this.source);
-            this.loader = new DefaultObjectLoader();
+            this.loader = this.loaderManager.object();
             return parserSet.ObjectParser;
         }else{
-            this.loader = new DefaultPrimitiveLoader();
+            this.loader = this.loaderManager.primitive();
             return parserSet.PrimitiveParser;
         }
     }
@@ -132,14 +137,14 @@ public class Json {
             char dest;
             if(Peeker.isArrayStart(dest = Json.this.source.charAt(Json.this.cursor))){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
-                Json.this.loader = new DefaultArrayLoader(Json.this.loader);
+                Json.this.loader = Json.this.loaderManager.array(Json.this.loader);
                 return parserSet.ArrayParser;
             }else if(Peeker.isObjectStart(dest)){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
-                Json.this.loader = new DefaultObjectLoader(Json.this.loader);
+                Json.this.loader = Json.this.loaderManager.object(Json.this.loader);
                 return parserSet.ObjectParser;
             }else{
-                Json.this.loader = new DefaultPrimitiveLoader(Json.this.loader);
+                Json.this.loader = Json.this.loaderManager.primitive(Json.this.loader);
                 return parserSet.ObjectPrimitiveParser;
             }
         }
@@ -215,14 +220,14 @@ public class Json {
             char dest ;
             if(Peeker.isArrayStart(dest = Json.this.source.charAt(cursor))){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
-                Json.this.loader = new DefaultArrayLoader(Json.this.loader);
+                Json.this.loader = Json.this.loaderManager.array(Json.this.loader);
                 return parserSet.ArrayParser;
             }else if(Peeker.isObjectStart(dest)){
                 if(!Json.this.roll()) throw new RuntimeException(Json.this.source);
-                Json.this.loader = new DefaultObjectLoader(Json.this.loader);
+                Json.this.loader = Json.this.loaderManager.object(Json.this.loader);
                 return parserSet.ObjectParser;
             }else{
-                Json.this.loader = new DefaultPrimitiveLoader(Json.this.loader);
+                Json.this.loader = Json.this.loaderManager.primitive(Json.this.loader);
                 return parserSet.ArrayPrimitiveParser;
             }
         }

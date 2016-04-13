@@ -40,8 +40,12 @@ public class FieldMetaInfo {
         this.hasGetter = true;
     }
 
-    public Object invokeGetter(Object target) throws ReflectiveOperationException {
-        return this.getter.invoke(target);
+    public Object invokeGetter(Object target) {
+        try {
+            return this.getter.invoke(target);
+        }catch (ReflectiveOperationException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public void buildSetter(Method setter){
@@ -49,8 +53,12 @@ public class FieldMetaInfo {
         this.hasSetter = true;
     }
 
-    public void invokeSetter(Object target,Object value) throws ReflectiveOperationException {
-        this.setter.invoke(target,value);
+    public void invokeSetter(Object target,Object value) {
+        try {
+            this.setter.invoke(target, value);
+        }catch (ReflectiveOperationException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean hasGetter(){
